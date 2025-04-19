@@ -85,6 +85,7 @@ function preload() {
   table = loadTable(csvPath, "csv", "header");
   let sandindex = parseInt(localStorage.getItem("index") || "1", 10);
   sandColors = sandColorPalettes[sandindex];
+  parseCSVwithPapa();
 }
 
 function withinCols(i) {

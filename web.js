@@ -223,61 +223,6 @@ function applyRangeSelection(start, end) {
   });
 }
 
-Papa.parse(csvPath, {
-  download: true,
-  header: true,
-  complete: function (results) {
-    const data = results.data;
-    const frequencies = data
-      .map((row) => Number(row.TotalFrequency))
-      .filter((v) => !isNaN(v));
-
-    const min = Math.min(...frequencies);
-    const max = Math.max(...frequencies);
-    const binSize = (max - min) / 16;
-    const bins = new Array(16).fill(0);
-
-    // TotalFrequency 값 기반으로 4등분 경계 계산
-    const step = (max - min) / 4;
-    const thresholds = Array.from({ length: 5 }, (_, i) =>
-      Math.round(min + step * i)
-    );
-
-    // 레이블 표시
-    const barLabels = document.getElementById("topic-barLabels");
-    barLabels.innerHTML = thresholds.map((t) => `<span>${t}</span>`).join("");
-
-    frequencies.forEach((val) => {
-      const index = Math.min(15, Math.floor((val - min) / binSize));
-      bins[index]++;
-    });
-
-    const maxCount = Math.max(...bins);
-
-    bins.forEach((count, index) => {
-      const bar = document.createElement("div");
-      bar.className = "bar";
-      bar.style.height = `${(count / maxCount) * 100}%`;
-
-      bar.addEventListener("click", () => {
-        if (startIndex === null) {
-          startIndex = index;
-          bar.classList.add("active");
-        } else if (endIndex === null) {
-          endIndex = index;
-          applyRangeSelection(startIndex, endIndex);
-        } else {
-          // 다시 선택 시작
-          resetSelection();
-          startIndex = index;
-          bar.classList.add("active");
-        }
-      });
-
-      barchart.appendChild(bar);
-    });
-  },
-});
 
 const startBtn = document.getElementById("startDateBtn");
 const endBtn = document.getElementById("endDateBtn");
@@ -286,6 +231,7 @@ const calendarWrapper = document.getElementById("calendarWrapper");
 let activeSelection = null;
 
 startBtn.addEventListener("click", () => {
+  console.log("1");
   activeSelection = "start";
   calendarWrapper.classList.toggle("hidden");
   startBtn.classList.toggle("selected");
@@ -526,3 +472,60 @@ function updateWordInfo(chosenWord) {
   });
 }
 
+function parseCSVwithPapa() {
+Papa.parse(csvPath, {
+  download: true,
+  header: true,
+  complete: function (results) {
+    const data = results.data;
+    const frequencies = data
+      .map((row) => Number(row.TotalFrequency))
+      .filter((v) => !isNaN(v));
+
+    const min = Math.min(...frequencies);
+    const max = Math.max(...frequencies);
+    const binSize = (max - min) / 16;
+    const bins = new Array(16).fill(0);
+
+    // TotalFrequency 값 기반으로 4등분 경계 계산
+    const step = (max - min) / 4;
+    const thresholds = Array.from({ length: 5 }, (_, i) =>
+      Math.round(min + step * i)
+    );
+
+    // 레이블 표시
+    const barLabels = document.getElementById("topic-barLabels");
+    barLabels.innerHTML = thresholds.map((t) => `<span>${t}</span>`).join("");
+
+    frequencies.forEach((val) => {
+      const index = Math.min(15, Math.floor((val - min) / binSize));
+      bins[index]++;
+    });
+
+    const maxCount = Math.max(...bins);
+
+    bins.forEach((count, index) => {
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      bar.style.height = `${(count / maxCount) * 100}%`;
+
+      bar.addEventListener("click", () => {
+        if (startIndex === null) {
+          startIndex = index;
+          bar.classList.add("active");
+        } else if (endIndex === null) {
+          endIndex = index;
+          applyRangeSelection(startIndex, endIndex);
+        } else {
+          // 다시 선택 시작
+          resetSelection();
+          startIndex = index;
+          bar.classList.add("active");
+        }
+      });
+
+      barchart.appendChild(bar);
+    });
+  },
+});
+}
