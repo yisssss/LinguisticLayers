@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Linguistic Layers</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="libraries/p5.min.js"></script>
+    <script src="libraries/p5.sound.min.js"></script>
+    <script src="https://unpkg.com/ccapture.js@1.1.0/build/CCapture.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    </head>
+    
+  </head>
+
+  <body>
+    <div id="custom-cursor"></div>
+    <div id="dblClickHint" class="dblclick-hint">Double click!</div>
+    
+    <div class="mobile-frame">
+
+      <div id="bottomModal" class="bottom-modal hidden">
+        <div class="modal-content">
+         <button onclick="closeModal()" class=" x-button"><img src="assets/x.png" alt="X"/></button>
+
+         <div class="consent-item">
+          <div class="consent-header">
+            <label class="check_wrapper">
+              <input type="checkbox" class="check_box" id="checkbox1" checked/>
+              <span class="custom_checkbox"></span>
+              <span class="checkbox_label">Typing Data</span>
+            </label>
+            
+          </div>
+          <p class="consent-description">
+            I agree to the recording and anonymous analysis of my voice for research and improvement purposes.          </p>
+        </div>
+      
+        <div class="consent-item">
+          <div class="consent-header">
+
+            <label class="check_wrapper">
+              <input type="checkbox" class="check_box" id="checkbox2" checked/>
+              <span class="custom_checkbox"></span>
+              <span class="checkbox_label">Voice Recording</span>
+            </label>
+
+          </div>
+          <p class="consent-description">
+            I agree to the collection and anonymous analysis of my typing input for research and service development.          </p>
+        </div>
+        </div>
+       </div>
+
+      <div id="canvas-container"></div>
+
+      <div id="container">
+      <div id="basic-page" >
+
+        <img src="assets/back.png" alt="뒤로 가기" id="specialBtn" style="display: none;" class="back-button" />
+
+
+        <div class="explain-basic" ><img src="assets/toparrow.png" alt="위: search page" class="toparrow" /><span>seive page</span></div>
+        <div id="labels-container">
+        </div>
+
+        <div id="words-container">
+        </div>
+
+        <div class="top-bar">
+          <div class="top-timer">14:22:09:12</div>
+          <img src="assets/capture.png" alt="포착하기" class="capture-button" />
+
+
+        </div>
+
+        <div id="chosenTopic-container" class="hidden2" >
+
+          <div class="chosenTopic-title">Topic</div><div class="chosenTopic">chosenTopic</div>
+          <div class="topic-label">Frequency<div class="topic-line"></div></div>
+          <div class="topic-label2">Last</br>Used Date<div class="topic-line2"></div></div>
+
+        <div class="topic-details">
+          <div class="topic-row">
+            <div class="topic-info-box">
+              <div class="freq-line">
+                <span>Recorded frequency</span><span class="value" id="topic-recordedFreq">53</span>
+              </div>
+              <div class="freq-line">
+                <span>Typed frequency</span><span class="value" id="topic-typedFreq">23</span>
+              </div>
+              <div class="freq-line total">
+                <span>Total frequency</span><span class="value" id="topic-totalFreq">76</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="topic-details">
+          <div class="freq-line date"><span class="value" id="topic-lastUsedDate">53</span>
+          </div>
+        </div>
+
+
+      
+      </div>
+
+
+
+      <div id="chosenWord-container" class="chosenWord-container hidden2">
+
+
+        <div class="chosenWord-title">Word</div><div class="chosenWord">chosenWord</div>
+
+        <div class="chosenWord-section">
+        <div class="wordFrequency-section">
+        <div class="label2">Frequency</div>
+        <div class="line2" id="line2-Date"></div>
+
+        <div id="word-frequencyChart">
+
+          <div id="word-barchart" class="word-bar-chart"></div>
+          <div id="word-barLabels" class="word-barLabels">
+            <span>3w ago</span><span>2w ago</span><span>1w ago</span><span>now</span></div>
+        </div>
+
+          <div class="word-details">
+            <div class="word-row">
+              <div class="word-info-box">
+                <div class="freq-line">
+                  <span>Recorded frequency</span><span class="value" id="word-recordedFreq">53</span>
+                </div>
+                <div class="freq-line">
+                  <span>Typed frequency</span><span class="value" id="word-typedFreq">23</span>
+                </div>
+                <div class="freq-line total">
+                  <span>Total frequency</span><span class="value" id="word-totalFreq">76</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <div class="wordLastUsedDate-section">
+          <div class="label2">Late<br>Used Date</div>
+          <div class="line2" id="line2-Frequency"></div>
+            <div class="freq-line dateword"><span class="value" id="word-lastUsedDate">53</span>
+            </div>
+        </div>
+      
+        <div class="wordRelateWords-section">
+          <div class="label2">Related<br>Words</div>
+          <div class="line2" id="line2-Type"></div>
+          <div id="word-relatedWords"></div>
+
+
+        </div>
+      </div>
+      </div>
+
+
+        <img src="assets/setting.png" alt="설정" class="setting-button" onclick="openModal()"/>
+        <img src="assets/i.png" alt="알림" class="i-button" />
+
+        <div id="chosenWord" class="hidden">chosenWord</div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="search-page">
+      <div class="explain-search" ><img src="assets/bottomarrow.png" alt="아래: basic page" class="bottomarrow" /> <span>layer page</span></div>
+
+      <div class="search-bar">
+
+        <h1 class="logo">Seive</h1>
+    
+        <div class="search-input-group">
+          <input type="text" class="search-input" placeholder="Enter a search term" />
+          <img src="assets/search.png" alt="검색하기" class="search-button" />
+        </div>
+    </div>
+    
+
+    
+      <div class="scroll-container">
+
+        <div class="date-section">
+        <div class="label2">Date<br>Range</div>
+        <div class="line2" id="line2-Date"></div>
+
+        <div class="date-range-picker">
+          <div class="date-range-header">
+            <div class="date-select" id="startDateBtn">01. 04. 2025.</div>
+            <img src="assets/rightarrow.png" alt="rightarrow" class="rightarrow-date" />
+            <div class="date-select" id="endDateBtn">15. 04. 2025.</div>
+          </div>
+        
+          <div class="calendar-wrapper hidden" id="calendarWrapper">
+            <div class="calendar">
+              <div class="calendar-header">
+                <img src="assets/leftarrow.png" alt="leftarrow" class="leftarrowBtn-date" />
+                <span class="calendar-month">April</span>
+                <span class="calendar-year">2025</span>
+                <img src="assets/rightarrow.png" alt="rightarrow" class="rightarrowBtn-date" />
+
+              </div>
+            
+              <div class="calendar-weekdays">
+                <span>MO</span><span>TU</span><span>WE</span><span>TH</span>
+                <span>FR</span><span class="sa">SA</span><span class="su">SU</span>
+              </div>
+            
+              <div class="calendar-days" id="calendarDays"></div>
+            </div>
+          </div>
+        </div>
+        </div>
+      
+        <div class="frequency-section">
+          <div class="label2">Frequency</div>
+          <div class="line2" id="line2-Frequency"></div>
+          <div id="topic-barchartWrapper">
+
+          <div class="bar-chart" id="topic-barchart"></div>
+          <div id="topic-barLabels" class="bar-labels"></div>
+</div>
+        </div>
+      
+        <div class="type-section">
+          <div class="label2">Type</div>
+          <div class="line2" id="line2-Type"></div>
+          <div class="toggle-container">
+            <button class="toggle-button selected" id="typedBtn">Typed</button>
+            <button class="toggle-button selected" id="recordedBtn">Spoken</button>
+          </div>
+        </div>
+
+      </div>
+      
+
+    </div>
+    <div class="horizontal-line"></div>
+    <div id="capture-toast">Linguistic layers successfully archived.</div>
+    <div id="i-toast"><strong>Texture</strong> indicates a higher frequency of spoken usage compared to typed usage.</br></br>
+      <strong>Color</strong> reflects recency: vividness means more recent use, gray indicates older data.</div>
+      <div id="search-toast">"Seive" is currently being developed...</div>
+
+    </div>
+
+
+  </div>
+
+  </body>
+
+  <script src="sketch.js"></script>
+  <script src="web.js"></script>
+  <script src="topic.js"></script>
+  <script src="word.js"></script>
+
+
+
+
+</html>
