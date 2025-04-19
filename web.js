@@ -223,7 +223,7 @@ function applyRangeSelection(start, end) {
   });
 }
 
-Papa.parse("assets/wordcloud_virtual_data.csv", {
+Papa.parse(csvPath, {
   download: true,
   header: true,
   complete: function (results) {
@@ -384,7 +384,7 @@ function updateChosenWordVisibility() {
 }
 
 function updateTopicInfo(chosenTopic) {
-  Papa.parse("assets/wordcloud_virtual_data.csv", {
+  Papa.parse(csvPath, {
     download: true,
     header: true,
     complete: function (results) {
@@ -432,7 +432,7 @@ function updateTopicInfo(chosenTopic) {
 }
 
 function updateWordInfo(chosenWord) {
-  Papa.parse("assets/wordcloud_virtual_data.csv", {
+  Papa.parse(csvPath, {
     download: true,
     header: true,
     complete: function (results) {

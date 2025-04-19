@@ -16,7 +16,11 @@ let velocityGrid;
 // How big is each square?
 let w = 6;
 let cols, rows;
-let sandColors = [
+
+let backgroundColor = "#FDFBEE";
+
+let sandColors = [];
+let sandColors_persona1 = [
   "#000000",
   "#FE4F2D",
   "#4C4949",
@@ -26,8 +30,47 @@ let sandColors = [
   "#57B4BA",
   "#4C4949",
 ];
+
+let sandColors_persona2 = [
+  "#000000",
+  "#00B894",
+  "#4C4949",
+  "#FDCB6E",
+  "#00B894",
+  "#FDCB6E",
+  "#0984E3",
+  "#4C4949",
+];
+
+let sandColors_persona3 = [
+  "#000000",
+  "#57B4BA",
+  "#4C4949",
+  "#FF6B81",
+  "#57B4BA",
+  "#FF6B81",
+  "#FFE66D",
+  "#4C4949",
+];
+let sandColors_persona4 = [
+  "#000000",
+  "#CAD2C5",
+  "#4C4949",
+  "#F4A261",
+  "#CAD2C5",
+  "#F4A261",
+  "#6C5CE7",
+  "#4C4949",
+];
+
+const sandColorPalettes = {
+  1: sandColors_persona1,
+  2: sandColors_persona2,
+  3: sandColors_persona3,
+  4: sandColors_persona4,
+};
+
 let currentColorIndex = 1;
-//'#FE4F2D' 빨강, '#57B4BA' 파랑, '#FEA692'분홍
 
 let gravity = 0.2;
 
@@ -35,9 +78,13 @@ let table;
 let topicTotals = {};
 let topicColorIndex = [];
 let topicTopY = {};
+let csvPath;
 
 function preload() {
-  table = loadTable("assets/wordcloud_virtual_data.csv", "csv", "header");
+  csvPath = localStorage.getItem("personaCSV") || "assets/csv/1.csv";
+  table = loadTable(csvPath, "csv", "header");
+  let sandindex = parseInt(localStorage.getItem("index") || "1", 10);
+  sandColors = sandColorPalettes[sandindex];
 }
 
 function withinCols(i) {
@@ -106,6 +153,14 @@ function keyPressed() {
     saveCanvas(fileName); // 파일 저장
     saveCanvasCount++; // 번호 증가
   }
+
+  // 키 입력 시 CSV 경로와 색상 배열 자체를 저장
+  if (["1", "2", "3", "4"].includes(key)) {
+    let index = key;
+    localStorage.setItem("personaCSV", `assets/csv/${index}.csv`);
+    localStorage.setItem("index", `${index}`);
+    location.reload();
+  }
 }
 
 function dropSand(topicColorIndex) {
@@ -116,13 +171,14 @@ function dropSand(topicColorIndex) {
   // Randomly add an area of sand particles
 
   let sandNum = floor(topicTotals[topicColorIndex] / 3);
-  if (DEBUG) console.log(
-    "Event occured",
-    "컬러인덱스:",
-    currentColorIndex,
-    "모래개수:",
-    sandNum
-  );
+  if (DEBUG)
+    console.log(
+      "Event occured",
+      "컬러인덱스:",
+      currentColorIndex,
+      "모래개수:",
+      sandNum
+    );
   let widthExtent = 24; // 가로 범위
   let heightExtent = sandNum;
 
@@ -178,7 +234,7 @@ let savedGridFromTopic = null;
 
 function draw() {
   if (pageState == 0) {
-    background("#FDFBEE");
+    background(backgroundColor);
 
     colorTopicSand();
 
